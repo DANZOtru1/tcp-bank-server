@@ -42,5 +42,44 @@ namespace nServer
                 Disconnect();
             }
         }
+
+        internal void AddConnection(ClientObject clientObject)
+        {
+            clients.Add(clientObject);
+        }
+
+        internal void RemoveConnection(string id)
+        {
+            ClientObject client = clients.FirstOrDefault(c => c.Id == id);
+            if (client != null)
+            {
+                clients.Remove(client);
+                Console.WriteLine("[{0}]: [{1}] Отключен сервером.", DateTime.Now.ToString(), id);
+            }
+        }
+
+        internal void SendMoney(string sendId, decimal sendSum)
+        {
+            foreach (ClientObject client in clients)
+            {
+                if (client.Id == sendId)
+                {
+                    client.Writer.Write(sendSum);
+                    client.Writer.Flush();
+                    Console.WriteLine("[{0}]: На счет [{1}] было отправлено [{2}].", DateTime.Now.ToString(), sendId, sendSum);
+                }
+            }
+        }
+
+        private void Disconnect()
+        {
+            listener.Stop();
+            foreach (ClientObject client in clients)
+            {
+                RemoveConnection(client.Id);
+                client.Close();
+            }
+            Console.WriteLine("[{0}]: Сервер остановлен.", DateTime.Now.ToString());
+        }
     }
 }

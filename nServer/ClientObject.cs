@@ -20,5 +20,70 @@ namespace nServer
             server = serverObject;
             server.AddConnection(this);
         }
+
+        public void Process()
+        {
+            try
+            {
+                Stream = client.GetStream();
+                Reader = new BinaryReader(Stream);
+                Writer = new BinaryWriter(Stream);
+                string sendId;
+                decimal sendSum;
+
+                while (true)
+                {
+                    try
+                    {
+                        GetSendIdSum(out sendId, out sendSum);
+                        server.SendMoney(sendId, sendSum);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("[{0}]: [{1}] Покинул сервер.", DateTime.Now.ToString(), Id);
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                server.RemoveConnection(this.Id);
+                Close();
+            }
+
+        }
+
+        private void GetSendIdSum(out string sendId, out decimal sendSum)
+        {
+            do
+            {
+                sendId = Reader.ReadString();
+                sendSum = Reader.ReadDecimal();
+            } while (Stream.DataAvailable);
+        }
+
+        public void Close()
+        {
+            if (Stream != null)
+            {
+                Stream.Close();
+            }
+            if (client != null)
+            {
+                client.Close();
+            }
+            if (Writer != null)
+            {
+                Writer.Dispose();
+            }
+            if (Reader != null)
+            {
+                Reader.Dispose();
+            }
+        }
     }
 }
