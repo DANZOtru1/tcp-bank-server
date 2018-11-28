@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace nServer
 {
-    class ClientObject
+    public class ClientObject
     {
         public string Id { get; private set; }
         public NetworkStream Stream { get; private set; }

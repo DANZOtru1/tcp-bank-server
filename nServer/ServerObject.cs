@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace nServer
 {
-    class ServerObject
+    public class ServerObject
     {
-        private const int port = 1717; //Порт Сервера (можно изменить)
+        private int port; //Порт Сервера (можно изменить)
         private static TcpListener listener;
         private List<ClientObject> clients = new List<ClientObject>();
 
-        internal void Listen()
+        public ServerObject()
+        {
+           port = GetPort();
+        }
+
+        public void Listen()
         {
             try
             {
@@ -43,13 +49,22 @@ namespace nServer
             }
         }
 
-        internal void AddConnection(ClientObject clientObject)
+
+        public void AddConnection(ClientObject clientObject)
         {
+            if(clientObject == null)
+            {
+                throw new ArgumentNullException(nameof(clientObject));
+            }
             clients.Add(clientObject);
         }
 
-        internal void RemoveConnection(string id)
+        public void RemoveConnection(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
             ClientObject client = clients.FirstOrDefault(c => c.Id == id);
             if (client != null)
             {
@@ -58,8 +73,18 @@ namespace nServer
             }
         }
 
-        internal void SendMoney(string sendId, decimal sendSum)
+        public void SendMoney(string sendId, decimal sendSum)
         {
+            if (string.IsNullOrWhiteSpace(sendId))
+            {
+                throw new ArgumentNullException(nameof(sendId));
+            }
+
+            if(sendSum < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(sendId), "Невозможно передать отрицательную или нулевую сумму");
+            }
+
             foreach (ClientObject client in clients)
             {
                 if (client.Id == sendId)
@@ -80,6 +105,29 @@ namespace nServer
                 client.Close();
             }
             Console.WriteLine("[{0}]: Сервер остановлен.", DateTime.Now.ToString());
+        }
+
+        private int GetPort()
+        {
+            Random random = new Random();
+            int port = random.Next(1000, 2000);
+            bool isAvailable = true;
+            do
+            {
+                IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+                TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+
+                foreach (TcpConnectionInformation tcpi in tcpConnInfoArray)
+                {
+                    if (tcpi.LocalEndPoint.Port == port)
+                    {
+                        isAvailable = false;
+                        port++;
+                        break;
+                    }
+                }
+            } while (!isAvailable);
+            return port;
         }
     }
 }
