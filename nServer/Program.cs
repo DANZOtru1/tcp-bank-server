@@ -3,13 +3,17 @@ using System.Threading.Tasks;
 
 namespace nServer
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        #region Private methods
+
+        private static void Main(string[] args)
         {
             ServerObject server = new ServerObject();
-            Task task = Task.Run(new Action(server.Listen));
+            Task task = Task.Run(new Action(server.Listen)); // спросить
             task.Wait();
         }
+
+        #endregion
     }
 }

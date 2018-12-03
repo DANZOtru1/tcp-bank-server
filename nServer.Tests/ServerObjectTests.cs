@@ -10,7 +10,7 @@ namespace nServer.Tests
 {
     public class ServerObjectTests
     {
-        [Test(Description ="тест инициализации")]
+        [Test(Description ="Тест инициализации")]
         [Order(1)]
         public void InitialTest()
         {
@@ -45,7 +45,7 @@ namespace nServer.Tests
         [TestCase("a")]
         [TestCase("wiueergergerg45g45g4weg5erhre")]
         [TestCase("wiuehfiwufiojh232asdf")]
-        [Test(Description ="тест на валидный id")]
+        [Test(Description ="Тест на валидный id")]
         public void RemoveConnectionTest(string id)
         {
             ServerObject serverObject = new ServerObject();
@@ -59,7 +59,7 @@ namespace nServer.Tests
         [TestCase("       ")]
         [TestCase("              ")]
         [TestCase("                                ")]
-        [Test(Description = "тест на валидный id")]
+        [Test(Description = "Тест на валидный id")]
         public void NegativeRemoveConnectionTest(string id)
         {
             ServerObject serverObject = new ServerObject();
@@ -75,7 +75,7 @@ namespace nServer.Tests
         };
 
         [TestCaseSource(nameof(SendMoneyCases))]
-        [Test(Description ="тест отправки денег")]
+        [Test(Description ="Тест отправки денег")]
         public void SendMoneyTest(string sendId, decimal sendSum)
         {
             ServerObject serverObject = new ServerObject();
@@ -91,7 +91,7 @@ namespace nServer.Tests
         };
 
         [TestCaseSource(nameof(NegativeSendMoneyCases))]
-        [Test(Description = "тест отправки денег")]
+        [Test(Description = "Тест отправки денег")]
         public void NegativeSendMoneyTest(string sendId, decimal sendSum)
         {
             ServerObject serverObject = new ServerObject();
