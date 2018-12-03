@@ -34,7 +34,7 @@ namespace nServer
         /// <summary>
         ///     Порт.
         /// </summary>
-        private readonly int _port; //Порт Сервера (можно изменить)
+        private readonly int _port = 1717; //Порт Сервера (можно изменить)
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace nServer
         /// </summary>
         public ServerObject()
         {
-            _port = GetPort();
+            //_port = GetPort();
         }
 
         #endregion
